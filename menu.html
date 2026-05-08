@@ -1,0 +1,301 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<title>Cantina</title>
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@600&display=swap" rel="stylesheet">
+</head>
+
+<div id="modal" class="modal">
+  <div class="modal-content">
+    <div class="lado-esquerdo">
+      <img id="modal-img">
+      <h2 id="modal-nome"></h2>
+      <ul id="modal-ingredientes"></ul>
+    </div>
+    <div class="lado-direito">
+      <label>Adicionais</label>
+      <input id="input-adicionais" type="text"><br><br>
+      <label>Preferências/Restrições</label>
+      <input id="input-restricoes" type="text"><br><br>
+      <label>Nome</label>
+      <input id="input-nome" type="text">
+      <button class="btn" onclick="confirmarPedido()">Salvar Pedido</button>
+    </div>
+  </div>
+</div>
+
+<body>
+<header>
+  <div class="user">
+    <img src="https://cdn-icons-png.flaticon.com/512/149/149071.png">
+  </div>
+  <div class="logo">Cantina</div>
+  <div class="menu-mobile" onclick="abrirMenu()">☰</div>
+  <nav id="menu">
+    <a href="#" onclick="voltar()">Início</a>
+    <a href="pedidos.html">Pedidos</a>
+    <a href="sobre.html">Sobre</a>
+    <a href="login.html">Login</a>
+  </nav>
+</header>
+
+<div class="perfil-box" id="perfil-box">
+  <h3 id="perfil-nome">Usuário</h3>
+  <p><b>Gmail:</b> <span id="perfil-email">email@gmail.com</span></p>
+  <p><b>CPF:</b> <span id="perfil-cpf">000.000.000-00</span></p>
+</div>
+
+<section class="banner">
+  <div class="slide active" style="background-image:url('https://images.unsplash.com/photo-1504674900247-0877df9cc836')"></div>
+  <div class="slide" style="background-image:url('https://images.unsplash.com/photo-1499028344343-cd173ffc68a9')"></div>
+  <div class="slide" style="background-image:url('https://images.unsplash.com/photo-1551782450-a2132b4ba21d')"></div>
+  <div class="overlay">
+    <h1>Bem-vindo à Cantina</h1>
+    <p>Comida rápida, saborosa e acessível</p>
+  </div>
+</section>
+
+<div class="container" id="categorias">
+  <div class="card">
+    <img src="https://images.unsplash.com/photo-1568901346375-23c9450c58cd?w=400">
+    <div class="card-content">
+      <h3>Pratos</h3>
+      <p>Refeições completas e saborosas para o seu dia.</p>
+      <button onclick="mostrar('pratos')">Ver</button>
+    </div>
+  </div>
+  <div class="card">
+    <img src="https://images.unsplash.com/photo-1551024506-0bccd828d307?w=400">
+    <div class="card-content">
+      <h3>Sobremesas</h3>
+      <p>Sobremesas deliciosas e saborosas para o seu dia.</p>
+      <button onclick="mostrar('sobremesas')">Ver</button>
+    </div>
+  </div>
+  <div class="card">
+    <img src="https://images.unsplash.com/photo-1544145945-f90425340c7e?w=400">
+    <div class="card-content">
+      <h3>Bebidas</h3>
+      <p>Bebidas refrescantes e saborosas para o seu dia.</p>
+      <button onclick="mostrar('bebidas')">Ver</button>
+    </div>
+  </div>
+</div>
+
+<div id="lista"></div>
+
+<section class="extra">
+  <h2>Os Mais pedidos da cantina</h2>
+  <div class="extra-cards">
+    <div class="extra-card">
+      <img src="https://images.unsplash.com/photo-1565299624946-b28f40a0ae38?w=400">
+      <h3>Pizza Especial</h3>
+    </div>
+    <div class="extra-card">
+      <img src="https://images.unsplash.com/photo-1568901346375-23c9450c58cd?w=400">
+      <h3>X-Burguer</h3>
+    </div>
+    <div class="extra-card">
+      <img src="https://images.unsplash.com/photo-1638176066959-888aa29e234d?w=400">
+      <h3>Suco Natural Limão</h3>
+    </div>
+  </div>
+</section>
+
+<section class="banner-extra">
+  <div class="texto-extra">
+    <h2>Sabores que fazem seu dia melhor 🍔</h2>
+    <p>A melhor cantina da escola com pratos, sobremesas e bebidas incríveis.</p>
+  </div>
+</section>
+
+<script>
+let editandoIndex = null;
+let itemSelecionado;
+let precoAtual = 0;
+
+// ✅ CORREÇÃO: dados fixos, sem depender do localStorage para o cardápio
+let dados = {
+  pratos: [
+    { nome: "X-Burguer",      preco: 14.00, img: "https://images.unsplash.com/photo-1568901346375-23c9450c58cd?w=300", ingredientes: ["Hambúrguer","Queijo","Alface","Tomate"] },
+    { nome: "Pizza",           preco: 22.00, img: "https://images.unsplash.com/photo-1565299624946-b28f40a0ae38?w=300", ingredientes: ["Queijo","Molho","Calabresa"] },
+    { nome: "Prato Executivo", preco: 18.90, img: "https://images.unsplash.com/photo-1546069901-ba9599a7e63c?w=300", ingredientes: ["Arroz","Feijão","Batata frita","Bife"] },
+    { nome: "Macarrão",        preco: 15.00, img: "https://images.unsplash.com/photo-1555949258-eb67b1ef0ceb?w=300", ingredientes: ["Macarrão","Molho","Queijo"] },
+    { nome: "Feijoada",        preco: 20.00, img: "https://images.unsplash.com/photo-1614256728866-f641ba1b8e5b?w=300", ingredientes: ["Feijão preto","Carne","Arroz"] }
+  ],
+  sobremesas: [
+    { nome: "Pudim",   preco: 7.00, img: "https://images.unsplash.com/photo-1551024506-0bccd828d307?w=300", ingredientes: ["Leite condensado","Ovos","Calda"] },
+    { nome: "Bolo",    preco: 6.50, img: "https://images.unsplash.com/photo-1578985545062-69928b1d9587?w=300", ingredientes: ["Chocolate","Farinha","Açúcar"] },
+    { nome: "Sorvete", preco: 8.00, img: "https://images.unsplash.com/photo-1563805042-7684c019e1cb?w=300", ingredientes: ["Leite","Açúcar","Sabor"] }
+  ],
+  bebidas: [
+    { nome: "Suco Natural",  preco: 7.00, img: "https://images.unsplash.com/photo-1638176066959-888aa29e234d?w=300", ingredientes: ["Frutas naturais"] },
+    { nome: "Refrigerante", preco: 5.00, img: "https://images.unsplash.com/photo-1622483767028-3f66f32aef97?w=300", ingredientes: ["Gás","Açúcar"] },
+    { nome: "Água",         preco: 3.00, img: "https://images.unsplash.com/photo-1548839140-29a749e1cf4d?w=300", ingredientes: ["Água mineral"] }
+  ]
+};
+
+// Slideshow
+let slides = document.querySelectorAll(".slide");
+let slideIndex = 0;
+setInterval(() => {
+  slides[slideIndex].classList.remove("active");
+  slideIndex = (slideIndex + 1) % slides.length;
+  slides[slideIndex].classList.add("active");
+}, 3000);
+
+function mostrar(tipo) {
+  document.getElementById("categorias").style.display = "none";
+  let lista = document.getElementById("lista");
+  lista.innerHTML = "";
+  if (!dados[tipo] || dados[tipo].length === 0) {
+    lista.innerHTML = "<p style='text-align:center;padding:40px'>Nenhum item encontrado.</p>";
+    return;
+  }
+  dados[tipo].forEach(item => {
+    lista.innerHTML += `
+      <div class="item">
+        <img src="${item.img}" onerror="this.src='https://images.unsplash.com/photo-1546069901-ba9599a7e63c?w=300'">
+        <h3>${item.nome}</h3>
+        <p>R$ ${item.preco.toFixed(2)}</p>
+        <button class="btn" onclick='abrirModal(${JSON.stringify(item)})'>Pedir</button>
+      </div>`;
+  });
+  // Botão voltar
+  lista.innerHTML += `<div style="width:100%;text-align:center;margin-top:20px">
+    <button class="btn" onclick="voltar()">← Voltar</button>
+  </div>`;
+}
+
+function voltar() {
+  document.getElementById("categorias").style.display = "flex";
+  document.getElementById("lista").innerHTML = "";
+}
+
+function abrirModal(item) {
+  precoAtual = item.preco;
+  itemSelecionado = item;
+  editandoIndex = null;
+  document.getElementById("modal").style.display = "flex";
+  document.getElementById("modal-img").src = item.img;
+  document.getElementById("modal-nome").innerText = item.nome;
+  let listaEl = document.getElementById("modal-ingredientes");
+  listaEl.innerHTML = "";
+  item.ingredientes.forEach(i => { listaEl.innerHTML += `<li>${i}</li>`; });
+  document.getElementById("input-adicionais").value = "";
+  document.getElementById("input-restricoes").value = "";
+  let usuario = JSON.parse(localStorage.getItem("usuario"));
+  if (usuario) document.getElementById("input-nome").value = usuario.nome;
+}
+
+function confirmarPedido() {
+  let pedidos = JSON.parse(localStorage.getItem("pedidos")) || [];
+  let pedido = {
+    id: Date.now(),
+    nome: document.getElementById("modal-nome").innerText,
+    preco: Number(precoAtual),
+    adicionais: document.getElementById("input-adicionais").value,
+    restricoes: document.getElementById("input-restricoes").value,
+    cliente: document.getElementById("input-nome").value,
+    status: "Em processo"
+  };
+  pedidos.push(pedido);
+  localStorage.setItem("pedidos", JSON.stringify(pedidos));
+  alert("Pedido salvo!");
+  document.getElementById("modal").style.display = "none";
+}
+
+window.onclick = function(e) {
+  let modal = document.getElementById("modal");
+  if (e.target === modal) modal.style.display = "none";
+};
+
+let usuario = JSON.parse(localStorage.getItem("usuario"));
+if (usuario) {
+  document.getElementById("perfil-nome").innerText = usuario.nome;
+  document.getElementById("perfil-email").innerText = usuario.email;
+  document.getElementById("perfil-cpf").innerText = usuario.cpf;
+}
+
+document.querySelector(".user").addEventListener("click", function() {
+  let box = document.getElementById("perfil-box");
+  box.style.display = box.style.display === "block" ? "none" : "block";
+});
+
+function abrirMenu() {
+  let menu = document.getElementById("menu");
+  menu.classList.toggle("ativo");
+}
+</script>
+
+<style>
+* { margin:0; padding:0; box-sizing:border-box; font-family:Arial,sans-serif; }
+body { background:#f5f5f5; }
+header { background:#0b3d3b; color:white; display:flex; align-items:center; justify-content:space-between; padding:15px 40px; position:relative; }
+.logo { position:absolute; left:50%; transform:translateX(-50%); font-family:'Poppins',sans-serif; font-size:28px; }
+nav a { color:white; text-decoration:none; margin-left:25px; }
+.menu-mobile { font-size:24px; cursor:pointer; color:white; display:none; }
+
+.banner { height:300px; position:relative; overflow:hidden; }
+.slide { position:absolute; width:100%; height:100%; background-size:cover; background-position:center; opacity:0; transition:opacity 1s; }
+.slide.active { opacity:1; }
+.overlay { position:relative; z-index:2; background:rgba(0,0,0,0.5); height:100%; display:flex; flex-direction:column; justify-content:center; padding-left:50px; color:white; }
+
+.container { display:flex; justify-content:center; gap:30px; padding:40px; flex-wrap:wrap; }
+.card { width:320px; border-radius:20px; overflow:hidden; background:#0b3d3b; color:white; box-shadow:0 10px 25px rgba(0,0,0,0.2); }
+.card img { width:100%; height:200px; object-fit:cover; }
+.card-content { padding:20px; }
+.card-content h3 { margin-bottom:10px; font-size:20px; }
+.card-content p { font-size:14px; color:#ddd; margin-bottom:20px; }
+.card button { width:100%; padding:14px; border-radius:25px; border:none; background:#e6e6e6; color:#0b3d3b; font-weight:bold; cursor:pointer; transition:0.3s; }
+.card button:hover { background:white; }
+
+.btn { padding:10px; border:none; background:#1f7a74; color:white; border-radius:6px; cursor:pointer; }
+.btn:hover { background:#145c58; }
+
+#lista { display:flex; justify-content:center; gap:30px; margin:40px; flex-wrap:wrap; align-items:flex-start; }
+.item { background:white; width:250px; border-radius:12px; text-align:center; padding:15px; box-shadow:0 5px 15px rgba(0,0,0,0.2); }
+.item img { width:100%; height:160px; object-fit:cover; border-radius:10px; }
+.item h3 { margin:10px 0; }
+.item p { color:#0b3d3b; font-weight:bold; margin-bottom:15px; }
+
+.modal { display:none; position:fixed; z-index:9999; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.6); justify-content:center; align-items:center; }
+.modal-content { background:#fff; padding:30px; border-radius:12px; display:flex; gap:20px; max-width:90%; }
+.lado-esquerdo img { width:200px; border-radius:10px; }
+.lado-esquerdo h2 { margin:10px 0 5px; }
+.lado-direito { display:flex; flex-direction:column; gap:8px; }
+.lado-direito label { font-weight:bold; color:#0b3d3b; }
+.lado-direito input { padding:10px; border-radius:6px; border:1px solid #ccc; }
+.lado-direito .btn { margin-top:15px; padding:12px; font-size:15px; }
+
+.user img { width:35px; height:35px; border-radius:50%; cursor:pointer; }
+.perfil-box { display:none; position:absolute; top:80px; left:20px; width:250px; background:white; padding:20px; border-radius:12px; box-shadow:0 5px 20px rgba(0,0,0,0.3); z-index:9999; }
+.perfil-box h3 { color:#0b3d3b; margin-bottom:10px; }
+.perfil-box p { color:#555; margin-bottom:8px; }
+
+.extra { padding:60px 40px; }
+.extra h2 { text-align:center; margin-bottom:40px; color:#0b3d3b; }
+.extra-cards { display:flex; gap:30px; justify-content:center; flex-wrap:wrap; }
+.extra-card { width:300px; background:white; border-radius:20px; overflow:hidden; box-shadow:0 5px 20px rgba(0,0,0,0.2); }
+.extra-card img { width:100%; height:200px; object-fit:cover; }
+.extra-card h3 { padding:20px; text-align:center; }
+
+.banner-extra { margin-top:60px; height:400px; background-image:url('https://images.unsplash.com/photo-1504674900247-0877df9cc836'); background-size:cover; background-position:center; position:relative; display:flex; align-items:center; justify-content:center; }
+.banner-extra::before { content:""; position:absolute; width:100%; height:100%; background:rgba(0,0,0,0.5); }
+.texto-extra { position:relative; z-index:2; color:white; text-align:center; }
+.texto-extra h2 { font-size:40px; margin-bottom:20px; }
+
+@media(max-width:768px){
+  .menu-mobile { display:block; }
+  nav { display:none; flex-direction:column; position:absolute; top:65px; right:0; background:#0b3d3b; width:100%; padding:10px; }
+  nav.ativo { display:flex; }
+  nav a { margin:10px 0; text-align:center; }
+  .container, #lista { flex-direction:column; align-items:center; }
+  .card, .item { width:90%; }
+  .modal-content { flex-direction:column; }
+  .lado-esquerdo img { width:100%; }
+}
+</style>
+</body>
+</html>

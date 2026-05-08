@@ -1,0 +1,286 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<title>Criar Conta</title>
+<link rel="stylesheet" href="cadastro.css">
+</head>
+<script>
+
+function cadastrar(event){
+
+    event.preventDefault();
+
+    let usuario = {
+
+        nome: document.querySelector('input[name="nm"]').value,
+
+        email: document.querySelector('input[name="em"]').value,
+
+        cpf: document.querySelector('input[name="cpf"]').value,
+
+        senha: document.querySelector('input[name="pw"]').value
+    };
+
+    localStorage.setItem(
+        "usuario",
+        JSON.stringify(usuario)
+    );
+
+    alert("Cadastro realizado!");
+
+    window.location.href = "menu.html";
+}
+
+
+
+function abrirMenu(){
+
+    let menu = document.getElementById("menu");
+
+    if(menu.classList.contains("ativo")){
+
+        menu.classList.remove("ativo");
+
+    } else {
+
+        menu.classList.add("ativo");
+    }
+}
+
+</script>
+
+
+<body>
+
+
+<header>
+    <div class="logo">Cantina</div>
+    <div class="menu-mobile" onclick="abrirMenu()">
+    ☰
+</div>
+    <nav id="menu">
+        <a href="menu.html">Início</a>
+        <a href="pedidos.html">Pedidos</a>
+        <a href="sobre.html">Sobre</a>
+        <a href="login.html">Login</a>
+    </nav>
+</header>
+
+
+<div class="container">
+    <div class="box">
+        <h2>Criar Conta</h2>
+
+           <form onsubmit="cadastrar(event)">
+
+
+            <div class="input-group">
+                <input type="text" name="nm" required>
+                <label>Nome</label>
+            </div>
+
+
+            <div class="input-group">
+                <input type="email" name="em" required>
+                <label>Email</label>
+            </div>
+
+
+            <div class="input-group">
+                <input type="text" name="cpf" required>
+                <label>CPF</label>
+            </div>
+
+
+            <div class="input-group">
+                <input type="password" name="pw" required>
+                <label>Senha</label>
+            </div>
+
+
+            <button type="submit">Cadastrar</button>
+
+
+            <p>Já possui conta? <a href="login.html">Entrar</a></p>
+        </form>
+    </div>
+</div>
+<script>
+
+function cadastrar(event){
+
+    event.preventDefault();
+
+    let usuario = {
+
+        nome:
+        document.querySelector('input[name="nm"]').value,
+
+        email:
+        document.querySelector('input[name="em"]').value,
+
+        cpf:
+        document.querySelector('input[name="cpf"]').value,
+
+        senha:
+        document.querySelector('input[name="pw"]').value
+    };
+
+    localStorage.setItem(
+        "usuario",
+        JSON.stringify(usuario)
+    );
+
+    alert("Cadastro realizado!");
+
+    window.location.href = "login.html";
+}
+
+</script>
+
+
+<style>
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: Arial, sans-serif;
+}
+
+
+body {
+    background: url('https://images.unsplash.com/photo-1495195134817-aeb325a55b65') no-repeat center/cover;
+
+}
+
+
+header {
+    background: #0b3d3b;
+    color: white;
+    display: flex;
+    justify-content: space-between;
+    padding: 15px 40px;
+}
+
+
+.container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: calc(100vh - 70px);
+}
+
+
+.box {
+    background: white;
+    padding: 40px;
+    width: 350px;
+    border-radius: 12px;
+    box-shadow: 0 8px 25px rgba(0,0,0,0.2);
+    text-align: center;
+}
+
+
+.box h2 {
+    margin-bottom: 25px;
+    color: #0b3d3b;
+}
+
+
+.input-group {
+    position: relative;
+    margin-bottom: 20px;
+}
+
+
+.input-group input {
+    width: 100%;
+    padding: 10px;
+    border: 1px solid #ccc;
+    border-radius: 6px;
+}
+
+
+.input-group label {
+    position: absolute;
+    left: 10px;
+    top: 10px;
+    color: #777;
+    transition: 0.3s;
+}
+
+
+.input-group input:focus + label,
+.input-group input:valid + label {
+    top: -10px;
+    font-size: 12px;
+    background: white;
+    padding: 0 5px;
+    color: #0b3d3b;
+}
+
+
+button {
+    width: 100%;
+    padding: 12px;
+    background: #1f7a74;
+    color: white;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+}
+
+
+button:hover {
+    background: #145c58;
+}
+
+
+nav a {
+    color: white;
+    text-decoration: none;
+    margin-left: 20px;
+    font-weight: bold;
+    transition: 0.3s;
+}
+
+
+nav a:hover {
+    color: #c8e6c9;
+}
+.menu-mobile{
+        margin:10px 0;
+        text-align:center;
+    }
+    .container{
+        flex-direction:column;
+        align-items:center;
+    }
+    #lista{
+        flex-direction:column;
+        align-items:center;
+    }
+    .card,
+    .item,
+    .pedido{
+        width:90%;
+    }
+    .modal-content{
+        flex-direction:column;
+        width:90%;
+    }
+    .lado-esquerdo img{
+        width:100%;
+    }
+    .overlay h1{
+        font-size:28px;
+    }
+    .overlay p{
+        font-size:15px;
+    }
+
+</style>
+
+</body>
+</html>

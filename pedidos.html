@@ -1,0 +1,280 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<title>Pedidos</title>
+</head>
+<script>
+
+function abrirMenu(){
+
+    let menu = document.getElementById("menu");
+
+    if(menu.classList.contains("ativo")){
+
+        menu.classList.remove("ativo");
+
+    } else {
+
+        menu.classList.add("ativo");
+    }
+}
+
+</script>
+
+<body>
+    <header>
+    <div class="user">
+        <img src="https://cdn-icons-png.flaticon.com/512/149/149071.png">
+    </div>
+
+    <div class="logo">Cantina</div>
+    <div class="menu-mobile" onclick="abrirMenu()">
+    ☰
+</div>
+
+    <nav id="menu">
+        <a href="menu.html">Início</a>
+        <a href="pedidos.html">Pedidos</a>
+        <a href="sobre.html">Sobre</a>
+        <a href="login.html">Login</a>
+    </nav>
+</header>
+
+
+<div class="container">
+    <h2>Seus Pedidos</h2>
+    <div id="lista"></div>
+</div>
+
+<script>
+function carregarPedidos(){
+
+    let pedidos =
+    JSON.parse(localStorage.getItem("pedidos")) || [];
+
+    let lista =
+    document.getElementById("lista");
+
+    lista.innerHTML = "";
+
+    pedidos.forEach((p, i) => {
+
+        lista.innerHTML += `
+
+        <div class="pedido">
+
+            <h3>${p.nome}</h3>
+
+            <p>
+                <strong>Adicionais:</strong>
+                ${p.adicionais}
+            </p>
+
+            <p>
+                <strong>Restrições:</strong>
+                ${p.restricoes}
+            </p>
+
+            <p>
+                <strong>Status:</strong>
+                <span class="status">${p.status}</span>
+            </p>
+
+            ${
+            p.status !== "Pedido Finalizado"
+
+            ? `
+
+            <button onclick="editar(${i})">
+                Editar
+            </button>
+
+            <button
+            onclick="cancelarPedido(${p.id})"
+            style="background:red; margin-left:10px;">
+                Cancelar
+            </button>
+
+            `
+
+            :
+
+            `<button disabled
+            style="
+            background:gray;
+            cursor:not-allowed;
+            ">
+            Pedido Finalizado
+            </button>`
+            }
+
+        </div>
+        `;
+    });
+}
+
+function editar(index){
+
+    let pedidos =
+    JSON.parse(localStorage.getItem("pedidos"));
+
+    let pedido = pedidos[index];
+
+    let novasRestricoes =
+    prompt(
+        "Editar restrições:",
+        pedido.restricoes
+    );
+
+    let novosAdicionais =
+    prompt(
+        "Editar adicionais:",
+        pedido.adicionais
+    );
+
+    if(novasRestricoes !== null){
+
+        pedido.restricoes = novasRestricoes;
+    }
+
+    if(novosAdicionais !== null){
+
+        pedido.adicionais = novosAdicionais;
+    }
+
+    pedidos[index] = pedido;
+
+    localStorage.setItem(
+        "pedidos",
+        JSON.stringify(pedidos)
+    );
+
+    alert("Pedido atualizado!");
+
+    carregarPedidos();
+}
+
+function cancelarPedido(id){
+
+    let pedidos =
+    JSON.parse(localStorage.getItem("pedidos")) || [];
+
+    pedidos = pedidos.filter(function(p){
+
+        return p.id !== id;
+
+    });
+
+    localStorage.setItem(
+        "pedidos",
+        JSON.stringify(pedidos)
+    );
+
+    alert("Pedido cancelado!");
+
+    carregarPedidos();
+}
+
+carregarPedidos();
+
+</script>
+<style>
+    header {
+    background: #0b3d3b;
+    color: white;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 15px 40px;
+    position: relative;
+}
+
+.logo {
+    position: absolute;
+    left: 50%;
+    transform: translateX(-50%);
+    font-family: 'Poppins', sans-serif;
+    font-size: 28px;
+}
+
+nav a {
+    color: white;
+    text-decoration: none;
+    margin-left: 25px;
+    transition: 0.3s;
+}
+
+nav a:hover {
+    border-bottom: 2px solid #c8e6c9;
+}
+
+.user img {
+    width: 35px;
+    height: 35px;
+    border-radius: 50%;
+}
+body {
+    font-family: Arial;
+    background: #f5f5f5;
+}
+
+.container {
+    padding: 100px 30px 30px;
+}
+
+.pedido {
+    background: white;
+    padding: 20px;
+    margin-bottom: 15px;
+    border-radius: 10px;
+    border-left: 5px solid #1f7a74;
+}
+
+.status {
+    color: orange;
+    font-weight: bold;
+}
+
+button {
+    margin-top: 10px;
+    padding: 8px;
+    border: none;
+    background: #1f7a74;
+    color: white;
+    border-radius: 5px;
+}
+.menu-mobile{
+        margin:10px 0;
+        text-align:center;
+    }
+    .container{
+        flex-direction:column;
+        align-items:center;
+    }
+    #lista{
+        flex-direction:column;
+        align-items:center;
+    }
+    .card,
+    .item,
+    .pedido{
+        width:90%;
+    }
+    .modal-content{
+        flex-direction:column;
+        width:90%;
+    }
+    .lado-esquerdo img{
+        width:100%;
+    }
+    .overlay h1{
+        font-size:28px;
+    }
+    .overlay p{
+        font-size:15px;
+    }
+</style>
+
+</body>
+</html>

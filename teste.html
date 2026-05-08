@@ -1,0 +1,882 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<title>Cantina</title>
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@600&display=swap" rel="stylesheet">
+
+</head>
+<script>
+
+function abrirMenu(){
+
+    let menu = document.getElementById("menu");
+
+    if(menu.classList.contains("ativo")){
+
+        menu.classList.remove("ativo");
+
+    } else {
+
+        menu.classList.add("ativo");
+    }
+}
+
+</script>
+<div id="modal" class="modal">
+
+    <div class="modal-content">
+
+        <div class="lado-esquerdo">
+            <img id="modal-img">
+
+            <h2 id="modal-nome"></h2>
+
+            <ul id="modal-ingredientes"></ul>
+        </div>
+
+        <div class="lado-direito">
+
+            <label>Adicionais</label>
+            <input id="input-adicionais" type="text">
+
+            <label>Preferências/Restrições</label>
+            <input id="input-restricoes" type="text">
+
+            <label>Nome</label>
+            <input id="input-nome" type="text">
+
+            <button class="btn" onclick="confirmarPedido()">
+                Salvar Pedido
+            </button>
+
+</div>
+
+        </div>
+
+    </div>
+
+</div>
+
+<body>
+
+<header>
+    <div class="user">
+    <img src="https://cdn-icons-png.flaticon.com/512/149/149071.png">
+</div>
+    <div class="logo">Cantina</div>
+<div class="menu-mobile" onclick="abrirMenu()">
+    ☰
+</div>
+    <nav id="menu">
+        <a href="#" onclick="voltar()">Início</a>
+        <a href="dashboard.html">Dashboard</a>
+        <a href="pedidos.html">Pedidos</a>
+        <a href="sobre.html">Sobre</a>
+        <a href="login.html">Login</a>
+    </nav>
+</header>
+<div class="perfil-box" id="perfil-box">
+
+    <h3 id="perfil-nome">Usuário</h3>
+
+    <p id="perfil-email">email@gmail.com</p>
+
+    <p id="perfil-cpf">000.000.000-00</p>
+
+</div>
+<section class="banner">
+    <div class="slide active" style="background-image:url('https://images.unsplash.com/photo-1504674900247-0877df9cc836')"></div>
+    <div class="slide" style="background-image:url('https://images.unsplash.com/photo-1499028344343-cd173ffc68a9')"></div>
+    <div class="slide" style="background-image:url('https://images.unsplash.com/photo-1551782450-a2132b4ba21d')"></div>
+
+    <div class="overlay">
+        <h1>Bem-vindo à Cantina</h1>
+        <p>Comida rápida, saborosa e acessível</p>
+    </div>
+</section>
+
+<div class="container" id="categorias">
+
+    <div class="card">
+        <img src="Prato.jpg">
+
+        <div class="card-content">
+            <h3>Pratos</h3>
+            <p>Refeições completas e saborosas para o seu dia.</p>
+
+            <button onclick="mostrar('pratos')">Ver</button>
+        </div>
+    </div>
+
+    <div class="card">
+        <img src="Sobremesa.jpg">
+
+        <div class="card-content">
+            <h3>Sobremesas</h3>
+            <p>Sobremesas deliciosas e saborosas para o seu dia.</p>
+
+            <button onclick="mostrar('sobremesas')">Ver</button>
+        </div>
+    </div>
+
+    <div class="card">
+        <img src="Bebidas.jpg">
+
+        <div class="card-content">
+            <h3>Bebidas</h3>
+            <p>Bebidas refrescantes e saborosas para o seu dia.</p>
+
+            <button onclick="mostrar('bebidas')">Ver</button>
+        </div>
+    </div>
+
+</div>
+<div class="criar-cardapio">
+<button onclick="novoCardapio()">
++ Criar Novo Cardápio
+</button>
+</div>
+
+<div id="lista"></div>
+
+<script>
+
+let editandoIndex = null;
+
+let slides = document.querySelectorAll(".slide");
+let index = 0;
+
+setInterval(() => {
+
+    slides[index].classList.remove("active");
+
+    index = (index + 1) % slides.length;
+
+    slides[index].classList.add("active");
+
+}, 3000);
+
+let dados = JSON.parse(localStorage.getItem("cardapios")) || {
+
+    pratos: [
+
+        {
+            nome: "Prato Executivo",
+            preco: 18.90,
+            img: "PratoE.jpg",
+            ingredientes: ["Arroz", "Feijão", "Batata frita", "Bife"]
+        },
+
+
+        {
+            nome: "Macarrão",
+            preco: 15.00,
+            img: "Macarrão.jpg",
+            ingredientes: ["Macarrão", "Molho", "Queijo"]
+        },
+
+        {
+            nome: "Feijoada",
+            preco: 20.00,
+            img: "Feijoada.jpg",
+            ingredientes: ["Feijão preto", "Carne", "Arroz"]
+        }
+
+    ],
+
+    sobremesas: [
+
+        {
+            nome: "Pudim",
+            preco: 7.00,
+            img: "pudim.jpg",
+            ingredientes: ["Leite condensado", "Ovos", "Calda"]
+        },
+
+        {
+            nome: "Bolo",
+            preco: 6.50,
+            img: "Bolo.jpg",
+            ingredientes: ["Chocolate", "Farinha", "Açúcar"]
+        },
+
+        {
+            nome: "Sorvete",
+            preco: 8.00,
+            img: "Sorvete.jpg",
+            ingredientes: ["Leite", "Açúcar", "Sabor"]
+        }
+
+    ],
+
+    bebidas: [
+
+        {
+            nome: "Refrigerante",
+            preco: 5.00,
+            img: "refri.jpg",
+            ingredientes: ["Gás", "Açúcar"]
+        },
+
+        {
+            nome: "Suco",
+            preco: 6.00,
+            img: "Suco.jpg",
+            ingredientes: ["Fruta natural"]
+        },
+
+        {
+            nome: "Água",
+            preco: 3.00,
+            img: "Agua.jpg",
+            ingredientes: ["Água mineral"]
+        }
+
+    ]
+
+};
+
+function salvarCardapios(){
+    localStorage.setItem(
+        "cardapios",
+        JSON.stringify(dados)
+    );
+}
+
+function mostrar(tipo){
+
+    document.getElementById("categorias").style.display = "none";
+    let lista = document.getElementById("lista");
+    lista.innerHTML = "";
+    dados[tipo].forEach((item, index) => {
+        lista.innerHTML += `
+
+        <div class="item">
+            <img src="${item.img}">
+            <h3>${item.nome}</h3>
+            <p>${item.descricao || ""}</p>
+            <p>R$ ${item.preco.toFixed(2)}</p>
+            <button class="btn"
+            onclick="editarProduto('${tipo}', ${index})">
+                Editar
+            </button>
+            <button class="remover"
+            onclick="removerProduto('${tipo}', ${index})">
+                Remover
+            </button>
+        </div>
+        `;
+    });
+    lista.innerHTML += `
+    <div class="add-produto">
+        <button onclick="adicionarProduto('${tipo}')">
+           + Adicionar Produto
+        </button>
+        <button class="remover"
+        onclick="excluirCardapio('${tipo}')">
+
+            Excluir Cardápio
+        </button>
+    </div>
+    `;
+}
+
+function voltar(){
+
+    document.getElementById("categorias").style.display = "flex";
+
+    document.getElementById("lista").innerHTML = "";
+}
+let precoAtual = 0;
+function abrirModal(item){
+
+    precoAtual = item.preco;
+
+    editandoIndex = null;
+
+    document.getElementById("modal").style.display = "flex";
+    document.getElementById("modal-img").src = item.img;
+    document.getElementById("modal-nome").innerText = item.nome;
+    let lista = document.getElementById("modal-ingredientes");
+    lista.innerHTML = "";
+    item.ingredientes.forEach(i => {
+        lista.innerHTML += `<li>${i}</li>`;
+    });
+    document.getElementById("input-adicionais").value = "";
+    document.getElementById("input-restricoes").value = "";
+    let usuario = JSON.parse(localStorage.getItem("usuario"));
+    if(usuario){
+        document.getElementById("input-nome").value = usuario.nome;
+    }
+}
+function confirmarPedido(){
+
+    let pedidos =
+    JSON.parse(localStorage.getItem("pedidos")) || [];
+    let pedido = {
+
+        nome: document.getElementById("modal-nome").innerText,
+        preco: precoAtual,
+        adicionais:
+        document.getElementById("input-adicionais").value,
+        restricoes:
+        document.getElementById("input-restricoes").value,
+        cliente:
+        document.getElementById("input-nome").value,
+        status: "Em processo"
+    };
+
+    if(editandoIndex === null){
+        pedidos.push(pedido);
+    } else {
+        pedidos[editandoIndex] = pedido;
+    }
+    localStorage.setItem(
+        "pedidos",
+        JSON.stringify(pedidos)
+    );
+    alert("Pedido salvo!");
+    document.getElementById("modal").style.display = "none";
+}
+
+window.onclick = function(e){
+
+    let modal = document.getElementById("modal");
+
+    if(e.target === modal){
+
+        modal.style.display = "none";
+    }
+}
+
+let usuario =
+JSON.parse(localStorage.getItem("usuario"));
+
+if(usuario){
+
+    document.getElementById("perfil-nome").innerText =
+    usuario.nome;
+
+    document.getElementById("perfil-email").innerText =
+    usuario.email;
+
+    document.getElementById("perfil-cpf").innerText =
+    usuario.cpf;
+}
+
+document.querySelector(".user").addEventListener("click", function(){
+
+    let box = document.getElementById("perfil-box");
+
+    if(box.style.display === "block"){
+
+        box.style.display = "none";
+
+    } else {
+
+        box.style.display = "block";
+    }
+});
+function novoCardapio(){
+    let nome = prompt("Nome do novo cardápio:");
+
+    if(nome){
+        dados[nome.toLowerCase()] = [];
+        salvarCardapios();
+        let categorias =
+        document.getElementById("categorias");
+
+        categorias.innerHTML += `
+        <div class="card">
+            <img src="https://images.unsplash.com/photo-1546069901-ba9599a7e63c">
+            <div class="card-content">
+                <h3>${nome}</h3>
+                <p>Novo cardápio criado.</p>
+                <button onclick="mostrar('${nome.toLowerCase()}')">
+                    Ver
+                    </button>
+                    <button class="btn-excluir-cardapio"
+                    onclick="excluirCardapio('${nome.toLowerCase()}')">
+                    Excluir
+                    </button>
+            </div>
+        </div>
+        `;
+        alert("Cardápio criado!");
+    }
+}
+function adicionarProduto(tipo){
+
+    let nome = prompt("Nome do produto:");
+    let preco = prompt("Preço:");
+    let img = prompt("Imagem:");
+
+    let ingredientes =
+    prompt("Ingredientes separados por vírgula:");
+
+    if(nome && preco){
+
+        dados[tipo].push({
+
+            nome: nome,
+            preco: parseFloat(preco),
+            descricao: "Novo produto",
+            img: img || "https://via.placeholder.com/300",
+            ingredientes:
+            ingredientes
+            ? ingredientes.split(",")
+
+            : []
+        });
+        salvarCardapios();
+        mostrar(tipo);
+    }
+}
+function removerProduto(tipo, index){
+
+    dados[tipo].splice(index, 1);
+    salvarCardapios();
+    mostrar(tipo);
+}
+
+function editarProduto(tipo, index){
+
+    let produto = dados[tipo][index];
+
+    let novoNome =
+    prompt("Novo nome:", produto.nome);
+
+    let novoPreco =
+    prompt("Novo preço:", produto.preco);
+
+    let novaDescricao =
+    prompt(
+        "Nova descrição:",
+        produto.descricao || ""
+    );
+    let novaImagem =
+    prompt(
+        "Nova imagem:",
+        produto.img
+    );
+    if(novoNome){
+        produto.nome = novoNome;
+    }
+    if(novoPreco){
+
+        produto.preco =
+        parseFloat(novoPreco);
+    }
+
+    produto.descricao =
+    novaDescricao;
+
+    if(novaImagem){
+
+        produto.img = novaImagem;
+    }
+    salvarCardapios();
+
+    mostrar(tipo);
+}
+function excluirCardapio(tipo){
+
+    if(!confirm("Deseja excluir este cardápio?")){
+        return;
+    }
+    delete dados[tipo];
+    salvarCardapios();
+    alert("Cardápio removido!");
+    location.reload();
+}
+for(let tipo in dados){
+
+    if(
+        tipo !== "pratos" &&
+        tipo !== "sobremesas" &&
+        tipo !== "bebidas"
+    ){
+        document.getElementById("categorias").innerHTML += `
+        <div class="card">
+
+    <img src="https://images.unsplash.com/photo-1546069901-ba9599a7e63c">
+
+    <div class="card-content">
+
+        <h3>${tipo}</h3>
+
+        <p>Novo cardápio criado.</p>
+
+        <button onclick="mostrar('${tipo}')">
+            Ver
+        </button>
+
+        <button class="btn-excluir-cardapio"
+        onclick="excluirCardapio('${tipo}')">
+            Excluir
+        </button>
+
+    </div>
+</div>
+`;
+    }
+}
+</script>
+
+<style>
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: Arial, sans-serif;
+}
+
+body {
+    background: #f5f5f5;
+}
+header{
+    background:#0b3d3b;
+    color:white;
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    padding:15px 40px;
+}
+.logo{
+    font-family:'Poppins', sans-serif;
+    font-size:28px;
+    font-weight:bold;
+}
+nav a {
+    color: white;
+    text-decoration: none;
+    margin-left: 25px;
+}
+
+.banner {
+    height: 300px;
+    position: relative;
+    overflow: hidden;
+}
+
+.slide {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    background-size: cover;
+    background-position: center;
+    opacity: 0;
+    transition: opacity 1s;
+}
+
+.slide.active {
+    opacity: 1;
+}
+
+.overlay {
+    position: relative;
+    z-index: 2;
+    background: rgba(0,0,0,0.5);
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    padding-left: 50px;
+    color: white;
+}
+
+.container {
+    display: flex;
+    justify-content: center;
+    gap: 30px;
+    margin: 40px;
+}
+.container {
+    display: flex;
+    justify-content: center;
+    gap: 30px;
+    padding: 40px;
+}
+
+.card {
+    width: 320px;
+    border-radius: 20px;
+    overflow: hidden;
+    background: #0b3d3b;
+    color: white;
+    box-shadow: 0 10px 25px rgba(0,0,0,0.2);
+}
+
+.card img {
+    width: 100%;
+    height: 200px;
+    object-fit: cover;
+}
+
+.card-content {
+    padding: 20px;
+}
+
+.card-content h3 {
+    margin-bottom: 10px;
+    font-size: 20px;
+}
+
+.card-content p {
+    font-size: 14px;
+    color: #ddd;
+    margin-bottom: 20px;
+}
+
+.card button {
+    width: 100%;
+    padding: 14px;
+    border-radius: 25px;
+    border: none;
+    background: #e6e6e6;
+    color: #0b3d3b;
+    font-weight: bold;
+    cursor: pointer;
+    transition: 0.3s;
+}
+
+.card button:hover {
+    background: white;
+}
+.btn {
+    padding: 10px;
+    border: none;
+    background: #1f7a74;
+    color: white;
+    border-radius: 6px;
+    cursor: pointer;
+}
+
+.btn:hover {
+    background: #145c58;
+}
+
+#lista {
+    display: flex;
+    justify-content: center;
+    gap: 30px;
+    margin: 40px;
+}
+
+.item{
+    background:white;
+    width:280px;
+    border-radius:15px;
+    text-align:center;
+    padding:15px;
+    box-shadow:0 5px 15px rgba(0,0,0,0.2);
+}
+
+
+.item img {
+    width: 100%;
+    border-radius: 10px;
+}
+
+.item h3 {
+    margin: 10px 0;
+}
+.item p {
+    color: #0b3d3b;
+    font-weight: bold;
+    margin-bottom: 15px;
+}
+.modal {
+    display: none; 
+    position: fixed;
+    z-index: 9999; 
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0,0,0,0.6);
+
+    justify-content: center;
+    align-items: center;
+}
+.modal-content {
+    background: #ffffff; 
+    padding: 20px;
+    border-radius: 12px;
+    display: flex;
+    gap: 20px;
+}
+
+.lado-direito input {
+    padding: 10px;
+    border-radius: 6px;
+    border: 1px solid #ccc;
+}
+
+.btn {
+    background: #1f7a74;
+}
+.user img {
+    width: 35px;
+    height: 35px;
+    border-radius: 50%;
+    cursor: pointer;
+}
+.perfil-box{
+    display:none;
+    position:absolute;
+    top:80px;
+    left:20px;
+    width:250px;
+    background:white;
+    padding:20px;
+    border-radius:12px;
+    box-shadow:0 5px 20px rgba(0,0,0,0.3);
+    z-index:9999;
+}
+.perfil-box h3{
+    color:#0b3d3b;
+    margin-bottom:10px;
+}
+
+.perfil-box p{
+    color:#555;
+    margin-bottom:8px;
+}
+    nav.ativo{
+        display:flex;
+    }
+    nav a{
+        margin:10px 0;
+        text-align:center;
+    }
+    .card,
+    .item,
+    .pedido{
+        width:90%;
+    }
+    .modal-content{
+        flex-direction:column;
+        width:90%;
+    }
+    .lado-esquerdo img{
+        width:100%;
+    }
+    .overlay h1{
+        font-size:28px;
+    }
+    .overlay p{
+        font-size:15px;
+    }
+
+.painel{
+    display:flex;
+    gap:20px;
+    color:white;
+    font-weight:bold;
+}
+.add-produto button,
+.novo-cardapio button{
+    padding:12px 20px;
+    border:none;
+    border-radius:10px;
+    background:#1f7a74;
+    color:white;
+    cursor:pointer;
+    margin:20px;
+}
+.remover{
+    margin-top:10px;
+    background:#b32020;
+    color:white;
+    border:none;
+    padding:10px;
+    border-radius:8px;
+    cursor:pointer;
+}
+.criar-cardapio{
+    text-align:center;
+    margin:40px;
+}
+.criar-cardapio button{
+    background:#1f7a74;
+    color:white;
+    border:none;
+    padding:15px 30px;
+    border-radius:12px;
+    cursor:pointer;
+    font-size:16px;
+}
+.menu-mobile{
+    display:none;
+    font-size:30px;
+    cursor:pointer;
+}
+@media(max-width:768px){
+    .menu-mobile{
+        display:block;
+        color:white;
+    }
+    nav{
+        display:none;
+        position:absolute;
+        top:70px;
+        right:20px;
+        background:#0b3d3b;
+        flex-direction:column;
+        padding:20px;
+        border-radius:10px;
+    }
+    nav.ativo{
+        display:flex;
+    }
+    .container,
+#lista{
+    display:flex;
+    flex-wrap:wrap;
+    justify-content:center;
+    gap:30px;
+    margin:40px;
+}
+    .extra-cards{
+        flex-direction:column;
+        align-items:center;
+    }
+    .card,
+    .item,
+    .extra-card{
+        width:90%;
+    }
+    .modal-content{
+        flex-direction:column;
+        width:90%;
+    }
+    .overlay h1{
+        font-size:28px;
+    }
+}
+nav{
+    display:flex;
+    gap:20px;
+}
+.btn-excluir-cardapio{
+    margin-top:10px;
+    width:100%;
+    padding:14px;
+    border:none;
+    border-radius:25px;
+    background:#b32020;
+    color:white;
+    font-weight:bold;
+    cursor:pointer;
+}
+
+.btn-excluir-cardapio:hover{
+    background:#8f1616;
+}
+</style>
+
+
+</body>
+</html>
